@@ -1,0 +1,9 @@
+<svg width="400" height="400" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="400" height="400" fill="linear-gradient(135deg, #667eea 0%, #764ba2 100%)"/>
+<circle cx="200" cy="200" r="120" fill="white" fill-opacity="0.1"/>
+<path d="M150 160C150 138.783 167.783 121 189 121H211C232.217 121 250 138.783 250 160V200C250 221.217 232.217 239 211 239H189C167.783 239 150 221.217 150 200V160Z" fill="white" fill-opacity="0.9"/>
+<circle cx="170" cy="180" r="25" fill="#667eea"/>
+<circle cx="230" cy="180" r="25" fill="#667eea"/>
+<path d="M170 155V205M230 155V205" stroke="white" stroke-width="3" stroke-linecap="round"/>
+<text x="200" y="320" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="16" font-weight="bold">Premium Headphones</text>
+</svg>

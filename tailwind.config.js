@@ -1,4 +1,6 @@
-// tailwind.config.js
+import colors from "tailwindcss/colors";
+
+/** @type {import('tailwindcss').Config} */
 export default {
   content: [
     "./index.html",
@@ -7,30 +9,18 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: {
-          50: '#ecf0f1',
-          500: '#3498db',
-          600: '#2980b9',
-        },
-        secondary: {
-          500: '#2ecc71',
-          600: '#27ae60',
-        },
-        gray: {
-          700: '#34495e',
-          600: '#2c3e50',
-          500: '#7f8c8d',
-        }
-      },
-      fontFamily: {
-        sans: ['Poppins', 'system-ui', '-apple-system', 'sans-serif'],
+        gray: colors.gray,
+        slate: colors.slate,
+        blue: colors.blue,
+        red: colors.red,
+        green: colors.green,
+        yellow: colors.yellow,
+        // add more if needed
       },
       boxShadow: {
-        'card': '0 6px 20px rgba(0, 0, 0, 0.08)',
-        'card-hover': '0 12px 30px rgba(0, 0, 0, 0.12)',
-      }
+        soft: "0 4px 12px rgba(0,0,0,0.08)",
+      },
     },
   },
   plugins: [],
 };
-
