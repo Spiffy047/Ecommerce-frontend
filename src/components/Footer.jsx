@@ -10,13 +10,13 @@ function Footer() {
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center space-x-3 mb-6">
               <div className="w-10 h-10 bg-gradient-to-br from-white to-gray-300 rounded-xl flex items-center justify-center">
-                <span className="text-gray-900 font-bold text-lg">E</span>
+                <span className="text-gray-900 font-bold text-lg">S</span>
               </div>
-              <span className="text-2xl font-bold">EliteShop</span>
+              <span className="text-2xl font-bold">SportZone</span>
             </div>
             <p className="text-gray-400 mb-6 max-w-md">
-              Your premier destination for cutting-edge technology and premium accessories. 
-              We curate the finest products for the modern lifestyle.
+              Your premier destination for quality sporting goods and athletic gear. 
+              We provide everything you need to excel in your favorite sports.
             </p>
             <div className="flex space-x-4">
               <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200">
@@ -43,22 +43,22 @@ function Footer() {
             <ul className="space-y-4">
               <li>
                 <Link to="/" className="text-gray-400 hover:text-white transition-colors duration-200">
-                  Shop All
+                  All Sports
                 </Link>
               </li>
               <li>
                 <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200">
-                  New Arrivals
+                  New Gear
                 </a>
               </li>
               <li>
                 <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200">
-                  Best Sellers
+                  Top Rated
                 </a>
               </li>
               <li>
                 <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200">
-                  Sale
+                  Clearance
                 </a>
               </li>
             </ul>
@@ -73,11 +73,7 @@ function Footer() {
                   Contact Us
                 </a>
               </li>
-              <li>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200">
-                  Shipping Info
-                </a>
-              </li>
+              
               <li>
                 <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200">
                   Returns

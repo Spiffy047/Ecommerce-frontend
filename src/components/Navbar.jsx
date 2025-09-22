@@ -24,10 +24,10 @@ function Navbar() {
         <div className="flex justify-between items-center h-20">
           <Link to="/" className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-gradient-to-br from-gray-900 to-gray-700 rounded-xl flex items-center justify-center">
-              <span className="text-white font-bold text-lg">E</span>
+              <span className="text-white font-bold text-lg">S</span>
             </div>
             <span className="text-2xl font-bold text-gray-900">
-              EliteShore
+              SportZone
             </span>
           </Link>
 
@@ -37,7 +37,7 @@ function Navbar() {
                 type="text" 
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Search products..."
+                placeholder="Search sports gear..."
                 className="w-80 px-4 py-2 pl-10 pr-4 text-sm border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
               />
               <button type="submit" className="absolute left-3 top-1/2 transform -translate-y-1/2">

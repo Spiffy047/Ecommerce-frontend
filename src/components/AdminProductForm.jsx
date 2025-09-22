@@ -36,7 +36,7 @@ const ProductSchema = Yup.object().shape({
     .max(500, 'URL must be less than 500 characters')
 });
 
-function AdminProductForm({ onSubmit, initialValues = {}, isEditing = false, onCancel }) {
+function AdminProductForm({ onSubmit, initialValues = {}, isEditing = false, onCancel, token }) {
   const defaultValues = {
     name: '',
     description: '',
@@ -64,6 +64,7 @@ function AdminProductForm({ onSubmit, initialValues = {}, isEditing = false, onC
       method: method,
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
       },
       body: JSON.stringify(payload),
     })
@@ -95,7 +96,7 @@ function AdminProductForm({ onSubmit, initialValues = {}, isEditing = false, onC
   return (
     <div className="bg-white rounded-lg shadow-xl p-8 max-w-lg mx-auto mb-8">
       <h2 className="text-3xl font-bold text-gray-900 text-center mb-6">
-        {isEditing ? 'Edit Product' : 'Add New Product'}
+        {isEditing ? 'Edit Sports Item' : 'Add New Sports Item'}
       </h2>
       <Formik
         initialValues={defaultValues}
@@ -107,13 +108,13 @@ function AdminProductForm({ onSubmit, initialValues = {}, isEditing = false, onC
           <Form className="space-y-6">
             <div>
               <label htmlFor="name" className="block text-sm font-semibold text-gray-900 mb-2">
-                Product Name *
+                Sports Item Name *
               </label>
               <Field 
                 name="name" 
                 type="text" 
                 className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-gray-900 focus:outline-none transition-all duration-200"
-                placeholder="e.g., Wireless Mouse"
+                placeholder="e.g., Basketball Shoes"
               />
               <ErrorMessage name="name" component="div" className="text-red-500 text-sm mt-1" />
             </div>
@@ -127,7 +128,7 @@ function AdminProductForm({ onSubmit, initialValues = {}, isEditing = false, onC
                 as="textarea" 
                 rows="4"
                 className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-gray-900 focus:outline-none transition-all duration-200 resize-none"
-                placeholder="A detailed description of the product..."
+                placeholder="A detailed description of the sports item..."
               />
               <ErrorMessage name="description" component="div" className="text-red-500 text-sm mt-1" />
             </div>
@@ -180,7 +181,7 @@ function AdminProductForm({ onSubmit, initialValues = {}, isEditing = false, onC
                 disabled={isSubmitting}
                 className="w-full bg-gradient-to-r from-gray-900 to-gray-700 text-white font-semibold py-4 px-8 rounded-lg hover:from-gray-800 hover:to-gray-600 transition-all duration-300 transform hover:scale-105 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isSubmitting ? (isEditing ? 'Updating...' : 'Adding...') : (isEditing ? 'Update Product' : 'Add Product')}
+                {isSubmitting ? (isEditing ? 'Updating...' : 'Adding...') : (isEditing ? 'Update Sports Item' : 'Add Sports Item')}
               </button>
               {isEditing && onCancel && (
                 <button 

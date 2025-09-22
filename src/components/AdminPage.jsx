@@ -1,24 +1,37 @@
 import React, { useState, useEffect } from 'react';
 import AdminProductForm from './AdminProductForm';
+import AdminLogin from './AdminLogin';
+import ChangePasswordModal from './ChangePasswordModal';
 
 function AdminPage() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingProduct, setEditingProduct] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [token, setToken] = useState(null);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
 
   useEffect(() => {
-    fetchProducts();
+    const savedToken = localStorage.getItem('adminToken');
+    if (savedToken) {
+      setToken(savedToken);
+      setIsAuthenticated(true);
+      fetchProducts(savedToken);
+    } else {
+      setLoading(false);
+    }
   }, []);
 
-  const fetchProducts = () => {
+  const fetchProducts = (authToken = token) => {
     fetch('/api/products')
       .then(response => response.json())
       .then(data => {
-        setProducts(data);
+        setProducts(Array.isArray(data) ? data : []);
         setLoading(false);
       })
       .catch(error => {
         console.error('Error fetching products:', error);
+        setProducts([]);
         setLoading(false);
       });
   };
@@ -43,7 +56,10 @@ function AdminPage() {
   const handleDeleteProduct = (productId) => {
     if (window.confirm('Are you sure you want to delete this product?')) {
       fetch(`/api/products/${productId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       })
       .then(() => {
         setProducts(products.filter(p => p.id !== productId));
@@ -51,6 +67,26 @@ function AdminPage() {
       .catch(error => console.error('Error deleting product:', error));
     }
   };
+
+  const handleLogin = (authToken, isFirstLogin = false) => {
+    setToken(authToken);
+    setIsAuthenticated(true);
+    fetchProducts(authToken);
+    if (isFirstLogin) {
+      setShowPasswordModal(true);
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('adminToken');
+    setToken(null);
+    setIsAuthenticated(false);
+    setProducts([]);
+  };
+
+  if (!isAuthenticated) {
+    return <AdminLogin onLogin={handleLogin} />;
+  }
 
   if (loading) {
     return (
@@ -66,9 +102,25 @@ function AdminPage() {
   return (
     <div className="bg-gray-50 min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Admin Panel</h1>
-          <p className="text-gray-600 text-lg">Manage your products and inventory</p>
+        <div className="mb-12 flex justify-between items-center">
+          <div>
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">Sports Admin Panel</h1>
+            <p className="text-gray-600 text-lg">Manage your sports gear and inventory</p>
+          </div>
+          <div className="flex space-x-3">
+            <button 
+              onClick={() => setShowPasswordModal(true)}
+              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors"
+            >
+              Change Password
+            </button>
+            <button 
+              onClick={handleLogout}
+              className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors"
+            >
+              Logout
+            </button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -79,12 +131,13 @@ function AdminPage() {
               initialValues={editingProduct}
               isEditing={!!editingProduct}
               onCancel={handleCancelEdit}
+              token={token}
             />
           </div>
 
           {/* Products List */}
           <div className="bg-white rounded-2xl shadow-lg p-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-8">Current Products ({products.length})</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-8">Current Sports Gear ({products.length})</h2>
             
             <div className="space-y-4 max-h-96 overflow-y-auto">
               {products.map(product => (
@@ -123,6 +176,12 @@ function AdminPage() {
             </div>
           </div>
         </div>
+        
+        <ChangePasswordModal 
+          isOpen={showPasswordModal}
+          onClose={() => setShowPasswordModal(false)}
+          token={token}
+        />
       </div>
     </div>
   );

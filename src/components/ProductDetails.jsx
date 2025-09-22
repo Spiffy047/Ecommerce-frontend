@@ -28,7 +28,7 @@ function ProductDetails() {
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-xl text-neutral-600">Loading product details...</p>
+          <p className="text-xl text-neutral-600">Loading sports gear details...</p>
         </div>
       </div>
     );
@@ -87,7 +87,7 @@ function ProductDetails() {
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <span>2 year warranty</span>
+                    <span>1 year warranty</span>
                   </div>
                 </div>
               </div>
@@ -124,7 +124,7 @@ function ProductDetails() {
                     <svg className="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                     </svg>
-                    <p className="text-gray-500 text-lg">No reviews yet. Be the first to review this product!</p>
+                    <p className="text-gray-500 text-lg">No reviews yet. Be the first to review this sports item!</p>
                   </div>
                 )}
               </div>
