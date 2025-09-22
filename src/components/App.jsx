@@ -4,11 +4,11 @@ import Navbar from './Navbar.jsx';
 import ProductList from './ProductList.jsx';
 import ProductDetails from './ProductDetails.jsx';
 import CartPage from './CartPage.jsx';
-import './App.css';
+import '../App.css';
 
 function App() {
   return (
-    <div>
+    <div className="min-h-screen bg-primary-50">
       <Navbar />
       <Routes>
         <Route path="/" element={<ProductList />} />
