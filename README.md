@@ -2,6 +2,11 @@
 
 A full-stack ecommerce application for sporting goods built with Flask backend and React frontend.
 
+## 🚀 Live Demo
+
+- **Frontend**: [SportZone Live App](https://your-frontend-url.onrender.com)
+- **Backend API**: [https://ecommerce-backend-rfab.onrender.com](https://ecommerce-backend-rfab.onrender.com)
+
 ## Features
 
 - **Product Management**: Full CRUD operations for sports products
@@ -48,7 +53,7 @@ npm run dev           # Start development server
 
 **Default Admin Credentials:**
 - Email: `admin@sportzone.com`
-- Password: `admin123`
+- Password: `Admin@123`
 
 ⚠️ **Security Note**: Change the default admin password immediately after first login.
 
@@ -84,13 +89,69 @@ npm run dev           # Start development server
 - Input validation and sanitization
 - Protected admin endpoints
 
+## Deployment
+
+### Backend (Render)
+- **URL**: https://ecommerce-backend-rfab.onrender.com
+- **Environment**: Production
+- **Database**: SQLite (auto-initialized)
+
+### Frontend (Render - Static Site)
+- **Build Command**: `npm install && npm run build`
+- **Publish Directory**: `./dist`
+- **Environment Variables**: `VITE_API_URL`
+
 ## Development Notes
 
 - Database file (`ecommerce.db`) is gitignored for security
 - Admin creation scripts are excluded from version control
 - Environment variables should be used for production secrets
 - Default credentials are for development only
+- Auto-logout after 5 minutes of inactivity for security
+
+## Project Structure
+
+```
+Ecommerce/
+├── Ecommerce-Backend/     # Flask API backend
+│   ├── app.py            # Main application
+│   ├── models.py         # Database models
+│   ├── requirements.txt  # Python dependencies
+│   └── render.yaml       # Deployment config
+├── frontend/             # React frontend
+│   ├── src/
+│   │   ├── components/   # React components
+│   │   ├── context/      # Context providers
+│   │   └── config.js     # API configuration
+│   ├── package.json      # Node dependencies
+│   └── vite.config.js    # Build configuration
+└── README.md
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## License
 
-This project is for educational purposes.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Contributors
+
+- [@spiffy047](https://github.com/spiffy047) - Lead Developer
+- [@abubakar324](https://github.com/abubakar324) - Developer
+
+## Contact
+
+For questions, suggestions, or support, please contact:
+- **Email**: mwanikijoe1@gmail.com
+- **Project Repository**: [SportZone Ecommerce](https://github.com/spiffy047/Ecommerce)
+
+## Acknowledgments
+
+- Inspired by modern e-commerce platforms
+- Uses best practices for full-stack development
