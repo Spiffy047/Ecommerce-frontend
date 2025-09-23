@@ -4,7 +4,7 @@ A full-stack ecommerce application for sporting goods built with Flask backend a
 
 ## 🚀 Live Demo
 
-- **Frontend**: [SportZone Live App](https://your-frontend-url.onrender.com)
+- **Frontend**: [SportZone Live App](https://sportzone-t1e0.onrender.com)
 - **Backend API**: [https://ecommerce-backend-rfab.onrender.com](https://ecommerce-backend-rfab.onrender.com)
 
 ## Features
