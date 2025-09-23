@@ -10,13 +10,31 @@ function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [token, setToken] = useState(null);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [inactivityTimer, setInactivityTimer] = useState(null);
 
   useEffect(() => {
     const savedToken = localStorage.getItem('adminToken');
     if (savedToken) {
-      setToken(savedToken);
-      setIsAuthenticated(true);
-      fetchProducts(savedToken);
+      // Validate token by making a test request
+      fetch('/api/products', {
+        headers: { 'Authorization': `Bearer ${savedToken}` }
+      })
+      .then(response => {
+        if (response.ok) {
+          setToken(savedToken);
+          setIsAuthenticated(true);
+          fetchProducts(savedToken);
+          resetInactivityTimer();
+        } else {
+          // Token is invalid, clear it
+          localStorage.removeItem('adminToken');
+          setLoading(false);
+        }
+      })
+      .catch(() => {
+        localStorage.removeItem('adminToken');
+        setLoading(false);
+      });
     } else {
       setLoading(false);
     }
@@ -31,8 +49,12 @@ function AdminPage() {
       })
       .catch(error => {
         console.error('Error fetching products:', error);
-        setProducts([]);
-        setLoading(false);
+        if (error.message.includes('401')) {
+          handleTokenExpired();
+        } else {
+          setProducts([]);
+          setLoading(false);
+        }
       });
   };
 
@@ -61,8 +83,15 @@ function AdminPage() {
           'Authorization': `Bearer ${token}`
         }
       })
-      .then(() => {
-        setProducts(products.filter(p => p.id !== productId));
+      .then(response => {
+        if (response.status === 401) {
+          handleTokenExpired();
+          return;
+        }
+        if (response.ok) {
+          setProducts(products.filter(p => p.id !== productId));
+          resetInactivityTimer();
+        }
       })
       .catch(error => console.error('Error deleting product:', error));
     }
@@ -72,17 +101,61 @@ function AdminPage() {
     setToken(authToken);
     setIsAuthenticated(true);
     fetchProducts(authToken);
+    resetInactivityTimer();
     if (isFirstLogin) {
       setShowPasswordModal(true);
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = (reason = 'manual') => {
+    if (inactivityTimer) {
+      clearTimeout(inactivityTimer);
+    }
     localStorage.removeItem('adminToken');
     setToken(null);
     setIsAuthenticated(false);
     setProducts([]);
+    if (reason === 'inactivity') {
+      alert('Session expired due to inactivity. Please log in again.');
+    } else if (reason === 'expired') {
+      alert('Session expired. Please log in again.');
+    }
   };
+
+  const resetInactivityTimer = () => {
+    if (inactivityTimer) {
+      clearTimeout(inactivityTimer);
+    }
+    const timer = setTimeout(() => {
+      handleLogout('inactivity');
+    }, 5 * 60 * 1000); // 5 minutes
+    setInactivityTimer(timer);
+  };
+
+  const handleTokenExpired = () => {
+    handleLogout('expired');
+  };
+
+  // Add activity listeners
+  useEffect(() => {
+    if (isAuthenticated) {
+      const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'];
+      const resetTimer = () => resetInactivityTimer();
+      
+      events.forEach(event => {
+        document.addEventListener(event, resetTimer, true);
+      });
+      
+      return () => {
+        events.forEach(event => {
+          document.removeEventListener(event, resetTimer, true);
+        });
+        if (inactivityTimer) {
+          clearTimeout(inactivityTimer);
+        }
+      };
+    }
+  }, [isAuthenticated, inactivityTimer]);
 
   if (!isAuthenticated) {
     return <AdminLogin onLogin={handleLogin} />;

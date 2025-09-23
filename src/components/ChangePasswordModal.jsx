@@ -35,7 +35,15 @@ function ChangePasswordModal({ isOpen, onClose, token }) {
                 newPassword: values.newPassword
               })
             })
-            .then(response => response.json())
+            .then(response => {
+              if (response.status === 401) {
+                localStorage.removeItem('adminToken');
+                alert('Session expired. Please log in again.');
+                window.location.reload();
+                return;
+              }
+              return response.json();
+            })
             .then(data => {
               if (data.message) {
                 setStatus({ type: 'success', message: data.message });
@@ -44,8 +52,14 @@ function ChangePasswordModal({ isOpen, onClose, token }) {
                 setStatus({ type: 'error', message: data.error || 'Failed to change password' });
               }
             })
-            .catch(() => {
-              setStatus({ type: 'error', message: 'Failed to change password' });
+            .catch((error) => {
+              if (error.message && error.message.includes('401')) {
+                localStorage.removeItem('adminToken');
+                alert('Session expired. Please log in again.');
+                window.location.reload();
+              } else {
+                setStatus({ type: 'error', message: 'Failed to change password' });
+              }
             })
             .finally(() => setSubmitting(false));
           }}

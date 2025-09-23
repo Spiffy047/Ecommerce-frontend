@@ -70,6 +70,12 @@ function AdminProductForm({ onSubmit, initialValues = {}, isEditing = false, onC
     })
       .then(response => {
         console.log('Response status:', response.status);
+        if (response.status === 401) {
+          localStorage.removeItem('adminToken');
+          alert('Session expired. Please log in again.');
+          window.location.reload();
+          return;
+        }
         if (!response.ok) {
           return response.json().then(err => {
             throw new Error(err.error || 'Network response was not ok');
@@ -86,7 +92,13 @@ function AdminProductForm({ onSubmit, initialValues = {}, isEditing = false, onC
       })
       .catch(error => {
         console.error(`Error ${isEditing ? 'updating' : 'adding'} product:`, error);
-        alert(`Failed to ${isEditing ? 'update' : 'add'} product: ${error.message}`);
+        if (error.message.includes('401') || error.message.includes('Unauthorized')) {
+          localStorage.removeItem('adminToken');
+          alert('Session expired. Please log in again.');
+          window.location.reload();
+        } else {
+          alert(`Failed to ${isEditing ? 'update' : 'add'} product: ${error.message}`);
+        }
       })
       .finally(() => {
         setSubmitting(false);
