@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { API_BASE_URL } from '../config';
 
 function ProductList() {
   const [products, setProducts] = useState([]);
@@ -9,7 +10,7 @@ function ProductList() {
   const location = useLocation();
 
   useEffect(() => {
-    fetch('/api/products') // <-- Corrected URL here
+    fetch(`${API_BASE_URL}/api/products`)
       .then(response => {
         if (!response.ok) {
           throw new Error('Network response was not ok');

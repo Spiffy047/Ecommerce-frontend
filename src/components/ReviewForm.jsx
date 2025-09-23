@@ -1,6 +1,7 @@
 import React from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
+import { API_BASE_URL } from '../config';
 
 const ReviewSchema = Yup.object().shape({
   rating: Yup.number()
@@ -25,7 +26,7 @@ function ReviewForm({ productId, onReviewAdded }) {
         setSubmitting(true);
         setStatus(null);
         
-        fetch(`/api/products/${productId}/reviews`, {
+        fetch(`${API_BASE_URL}/api/products/${productId}/reviews`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'

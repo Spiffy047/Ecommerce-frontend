@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import ReviewForm from './ReviewForm.jsx';
+import { API_BASE_URL } from '../config';
 
 function ProductDetails() {
   const { id } = useParams();
@@ -11,13 +12,13 @@ function ProductDetails() {
 
   useEffect(() => {
     // Fetch product details
-    fetch(`/api/products/${id}`)
+    fetch(`${API_BASE_URL}/api/products/${id}`)
       .then(response => response.json())
       .then(data => setProduct(data))
       .catch(error => console.error('Error fetching product:', error));
 
     // Fetch reviews for this product
-    fetch(`/api/products/${id}/reviews`)
+    fetch(`${API_BASE_URL}/api/products/${id}/reviews`)
       .then(response => response.json())
       .then(data => setReviews(data))
       .catch(error => console.error('Error fetching reviews:', error));

@@ -2,6 +2,7 @@
 import React from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
+import { API_BASE_URL } from '../config';
 
 const ProductSchema = Yup.object().shape({
   name: Yup.string()
@@ -47,7 +48,7 @@ function AdminProductForm({ onSubmit, initialValues = {}, isEditing = false, onC
   };
 
   const handleSubmit = (values, { setSubmitting, resetForm }) => {
-    const url = isEditing ? `/api/products/${initialValues.id}` : '/api/products';
+    const url = isEditing ? `${API_BASE_URL}/api/products/${initialValues.id}` : `${API_BASE_URL}/api/products`;
     const method = isEditing ? 'PUT' : 'POST';
     
     const payload = {

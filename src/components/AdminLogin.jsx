@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
+import { API_BASE_URL } from '../config';
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string().email('Invalid email').required('Email is required'),
@@ -23,7 +24,7 @@ function AdminLogin({ onLogin }) {
           validationSchema={LoginSchema}
           onSubmit={(values, { setSubmitting }) => {
             setError('');
-            fetch('/api/auth/login', {
+            fetch(`${API_BASE_URL}/api/auth/login`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(values)

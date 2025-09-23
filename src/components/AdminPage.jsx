@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import AdminProductForm from './AdminProductForm';
 import AdminLogin from './AdminLogin';
 import ChangePasswordModal from './ChangePasswordModal';
+import { API_BASE_URL } from '../config';
 
 function AdminPage() {
   const [products, setProducts] = useState([]);
@@ -16,7 +17,7 @@ function AdminPage() {
     const savedToken = localStorage.getItem('adminToken');
     if (savedToken) {
       // Validate token by making a test request
-      fetch('/api/products', {
+      fetch(`${API_BASE_URL}/api/products`, {
         headers: { 'Authorization': `Bearer ${savedToken}` }
       })
       .then(response => {
@@ -41,7 +42,7 @@ function AdminPage() {
   }, []);
 
   const fetchProducts = (authToken = token) => {
-    fetch('/api/products')
+    fetch(`${API_BASE_URL}/api/products`)
       .then(response => response.json())
       .then(data => {
         setProducts(Array.isArray(data) ? data : []);
@@ -77,7 +78,7 @@ function AdminPage() {
 
   const handleDeleteProduct = (productId) => {
     if (window.confirm('Are you sure you want to delete this product?')) {
-      fetch(`/api/products/${productId}`, {
+      fetch(`${API_BASE_URL}/api/products/${productId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`

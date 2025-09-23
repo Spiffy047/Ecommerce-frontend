@@ -1,6 +1,7 @@
 import React from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
+import { API_BASE_URL } from '../config';
 
 const PasswordSchema = Yup.object().shape({
   currentPassword: Yup.string().required('Current password is required'),
@@ -24,7 +25,7 @@ function ChangePasswordModal({ isOpen, onClose, token }) {
           initialValues={{ currentPassword: '', newPassword: '', confirmPassword: '' }}
           validationSchema={PasswordSchema}
           onSubmit={(values, { setSubmitting, setStatus }) => {
-            fetch('/api/auth/change-password', {
+            fetch(`${API_BASE_URL}/api/auth/change-password`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
