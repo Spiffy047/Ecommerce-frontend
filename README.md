@@ -2,7 +2,7 @@
 
 A full-stack ecommerce application for sporting goods built with Flask backend and React frontend.
 
-## 🚀 Live Demo
+## Live Demo
 
 - **Frontend**: [SportZone Live App](https://sportzone-t1e0.onrender.com)
 - **Backend API**: [https://ecommerce-backend-rfab.onrender.com](https://ecommerce-backend-rfab.onrender.com)
@@ -55,7 +55,7 @@ npm run dev           # Start development server
 - Email: `admin@sportzone.com`
 - Password: `Admin@123`
 
-⚠️ **Security Note**: Change the default admin password immediately after first login.
+**Security Note**: Change the default admin password immediately after first login.
 
 ## Database Models
 
