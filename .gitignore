@@ -2,10 +2,16 @@
 node_modules/
 /.pnp
 .pnp.js
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
 
 # Production builds
 /dist
 /build
+storybook-static/
 
 # Environment variables
 .env
@@ -27,19 +33,33 @@ pids
 *.seed
 *.pid.lock
 
-# Coverage directory used by tools like istanbul
+# Coverage directory
 coverage/
 *.lcov
+.nyc_output
+
+# Testing
+.jest/
 
 # IDE
 .vscode/
 .idea/
+*.swp
+*.swo
+*~
 
 # OS
 .DS_Store
 *.tgz
 *.tar.gz
+Thumbs.db
 
 # Temporary folders
 tmp/
 temp/
+
+# Misc
+*.tsbuildinfo
+next-env.d.ts
+.vercel
+.netlify
