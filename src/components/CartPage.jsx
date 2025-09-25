@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { API_BASE_URL } from '../config';
 
 function CartPage() {
   const { items, removeFromCart, updateQuantity, getCartTotal, clearCart } = useCart();
@@ -20,7 +21,7 @@ function CartPage() {
 
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:5000/api/orders/checkout', {
+      const response = await fetch(`${API_BASE_URL}/api/orders/checkout`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

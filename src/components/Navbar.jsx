@@ -3,11 +3,11 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 
-function Navbar() {
+function Navbar({ user: propUser }) {
   const { getCartItemsCount } = useCart();
   const cartCount = getCartItemsCount();
   const [searchTerm, setSearchTerm] = useState('');
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(propUser);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const navigate = useNavigate();
 
@@ -21,12 +21,27 @@ function Navbar() {
         localStorage.removeItem('user');
       }
     }
+
+    const handleUserLogin = () => {
+      const userData = localStorage.getItem('user');
+      if (userData) {
+        setUser(JSON.parse(userData));
+      }
+    };
+
+    window.addEventListener('userLogin', handleUserLogin);
+    return () => window.removeEventListener('userLogin', handleUserLogin);
   }, []);
+
+  useEffect(() => {
+    setUser(propUser);
+  }, [propUser]);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setUser(null);
+    window.dispatchEvent(new Event('userLogout'));
     navigate('/');
   };
 

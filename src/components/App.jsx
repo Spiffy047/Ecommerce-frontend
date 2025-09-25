@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Route, Routes, Navigate } from 'react-router-dom';
+import { CartProvider } from '../context/CartContext';
 import Navbar from './Navbar.jsx';
 import ProductList from './ProductList.jsx';
 import ProductDetails from './ProductDetails.jsx';
@@ -39,42 +40,46 @@ function App() {
 
   const handleLogin = (userData) => {
     setUser(userData);
+    window.dispatchEvent(new Event('userLogin'));
   };
 
   const handleAdminLogin = (userData) => {
     setUser(userData);
+    window.dispatchEvent(new Event('userLogin'));
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      <Navbar />
-      <main className="flex-1">
-        <Routes>
-          <Route path="/" element={<ProductList />} />
-          <Route path="/products/:id" element={<ProductDetails />} />
-          <Route path="/cart" element={<CartPage />} />
-          <Route path="/login" element={<UserAuth onLogin={handleLogin} />} />
-          <Route path="/admin-login" element={<AdminAuth onAdminLogin={handleAdminLogin} />} />
-          <Route 
-            path="/profile" 
-            element={
-              <ProtectedRoute requireAuth={true}>
-                <UserProfile />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/admin" 
-            element={
-              <ProtectedRoute requireAdmin={true}>
-                <AdminPage />
-              </ProtectedRoute>
-            } 
-          />
-        </Routes>
-      </main>
-      <Footer />
-    </div>
+    <CartProvider>
+      <div className="min-h-screen bg-gray-50 flex flex-col">
+        <Navbar user={user} />
+        <main className="flex-1">
+          <Routes>
+            <Route path="/" element={<ProductList />} />
+            <Route path="/products/:id" element={<ProductDetails />} />
+            <Route path="/cart" element={<CartPage />} />
+            <Route path="/login" element={<UserAuth onLogin={handleLogin} />} />
+            <Route path="/admin-login" element={<AdminAuth onAdminLogin={handleAdminLogin} />} />
+            <Route 
+              path="/profile" 
+              element={
+                <ProtectedRoute requireAuth={true}>
+                  <UserProfile />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/admin" 
+              element={
+                <ProtectedRoute requireAdmin={true}>
+                  <AdminPage />
+                </ProtectedRoute>
+              } 
+            />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
+    </CartProvider>
   );
 }
 
