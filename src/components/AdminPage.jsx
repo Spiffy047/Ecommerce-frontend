@@ -187,7 +187,7 @@ function AdminPage() {
                       />
                       <div>
                         <h3 className="font-semibold text-gray-900">{product.name}</h3>
-                        <p className="text-gray-600">${product.price} • Stock: {product.stock}</p>
+                        <p className="text-gray-600">KSh {product.price?.toLocaleString()} • Stock: {product.stock}</p>
                       </div>
                     </div>
                     <div className="flex space-x-2">
@@ -241,13 +241,13 @@ function AdminPage() {
                       />
                       <div>
                         <h3 className="font-semibold text-gray-900">{product.name}</h3>
-                        <p className="text-gray-600">${product.price}</p>
+                        <p className="text-gray-600">KSh {product.price?.toLocaleString()}</p>
                       </div>
                     </div>
                     <div className="text-right">
                       <p className="font-bold text-lg text-green-600">{product.total_sold} sold</p>
                       <p className="text-sm text-gray-500">
-                        Revenue: ${(product.total_sold * product.price).toFixed(2)}
+                        Revenue: KSh {(product.total_sold * product.price)?.toLocaleString()}
                       </p>
                     </div>
                   </div>
