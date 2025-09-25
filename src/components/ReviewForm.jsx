@@ -18,6 +18,23 @@ const ReviewSchema = Yup.object().shape({
 });
 
 function ReviewForm({ productId, onReviewAdded }) {
+  const user = JSON.parse(localStorage.getItem('user') || 'null');
+  const token = localStorage.getItem('token');
+
+  if (!user || !token) {
+    return (
+      <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
+        <p className="text-gray-600 mb-4">Please sign in to write a review</p>
+        <a 
+          href="/login" 
+          className="inline-block bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors"
+        >
+          Sign In
+        </a>
+      </div>
+    );
+  }
+
   return (
     <Formik
       initialValues={{ rating: '', comment: '' }}
@@ -29,7 +46,8 @@ function ReviewForm({ productId, onReviewAdded }) {
         fetch(`${API_BASE_URL}/api/products/${productId}/reviews`, {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
           },
           body: JSON.stringify({
             rating: parseInt(values.rating),

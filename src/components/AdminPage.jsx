@@ -1,47 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import AdminProductForm from './AdminProductForm';
-import AdminLogin from './AdminLogin';
-import ChangePasswordModal from './ChangePasswordModal';
+
 import { API_BASE_URL } from '../config';
 
 function AdminPage() {
   const [products, setProducts] = useState([]);
+  const [bestsellers, setBestsellers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingProduct, setEditingProduct] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [token, setToken] = useState(null);
-  const [showPasswordModal, setShowPasswordModal] = useState(false);
-  const [inactivityTimer, setInactivityTimer] = useState(null);
+  const [activeTab, setActiveTab] = useState('products');
+  const user = JSON.parse(localStorage.getItem('user') || 'null');
+  const token = localStorage.getItem('token');
 
   useEffect(() => {
-    const savedToken = localStorage.getItem('adminToken');
-    if (savedToken) {
-      // Validate token by making a test request
-      fetch(`${API_BASE_URL}/api/products`, {
-        headers: { 'Authorization': `Bearer ${savedToken}` }
-      })
-      .then(response => {
-        if (response.ok) {
-          setToken(savedToken);
-          setIsAuthenticated(true);
-          fetchProducts(savedToken);
-          resetInactivityTimer();
-        } else {
-          // Token is invalid, clear it
-          localStorage.removeItem('adminToken');
-          setLoading(false);
-        }
-      })
-      .catch(() => {
-        localStorage.removeItem('adminToken');
-        setLoading(false);
-      });
+    if (user && user.is_admin && token) {
+      fetchProducts();
+      fetchBestsellers();
     } else {
       setLoading(false);
     }
   }, []);
 
-  const fetchProducts = (authToken = token) => {
+  const fetchProducts = () => {
     fetch(`${API_BASE_URL}/api/products`)
       .then(response => response.json())
       .then(data => {
@@ -50,22 +30,34 @@ function AdminPage() {
       })
       .catch(error => {
         console.error('Error fetching products:', error);
-        if (error.message.includes('401')) {
-          handleTokenExpired();
-        } else {
-          setProducts([]);
-          setLoading(false);
-        }
+        setProducts([]);
+        setLoading(false);
+      });
+  };
+
+  const fetchBestsellers = () => {
+    fetch(`${API_BASE_URL}/api/admin/bestsellers`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
+      .then(response => response.json())
+      .then(data => {
+        setBestsellers(Array.isArray(data) ? data : []);
+      })
+      .catch(error => {
+        console.error('Error fetching bestsellers:', error);
+        setBestsellers([]);
       });
   };
 
   const handleProductAdded = (newProduct) => {
-    setProducts([...products, newProduct]);
+    setProducts(prev => [...prev, newProduct]);
+    fetchBestsellers(); // Refresh bestsellers
   };
 
   const handleProductUpdated = (updatedProduct) => {
-    setProducts(products.map(p => p.id === updatedProduct.id ? updatedProduct : p));
+    setProducts(prev => prev.map(p => p.id === updatedProduct.id ? updatedProduct : p));
     setEditingProduct(null);
+    fetchBestsellers(); // Refresh bestsellers
   };
 
   const handleEditProduct = (product) => {
@@ -85,81 +77,36 @@ function AdminPage() {
         }
       })
       .then(response => {
-        if (response.status === 401) {
-          handleTokenExpired();
-          return;
-        }
         if (response.ok) {
-          setProducts(products.filter(p => p.id !== productId));
-          resetInactivityTimer();
+          setProducts(prev => prev.filter(p => p.id !== productId));
+          fetchBestsellers(); // Refresh bestsellers after deletion
+        } else {
+          alert('Failed to delete product');
         }
       })
-      .catch(error => console.error('Error deleting product:', error));
-    }
-  };
-
-  const handleLogin = (authToken, isFirstLogin = false) => {
-    setToken(authToken);
-    setIsAuthenticated(true);
-    fetchProducts(authToken);
-    resetInactivityTimer();
-    if (isFirstLogin) {
-      setShowPasswordModal(true);
-    }
-  };
-
-  const handleLogout = (reason = 'manual') => {
-    if (inactivityTimer) {
-      clearTimeout(inactivityTimer);
-    }
-    localStorage.removeItem('adminToken');
-    setToken(null);
-    setIsAuthenticated(false);
-    setProducts([]);
-    if (reason === 'inactivity') {
-      alert('Session expired due to inactivity. Please log in again.');
-    } else if (reason === 'expired') {
-      alert('Session expired. Please log in again.');
-    }
-  };
-
-  const resetInactivityTimer = () => {
-    if (inactivityTimer) {
-      clearTimeout(inactivityTimer);
-    }
-    const timer = setTimeout(() => {
-      handleLogout('inactivity');
-    }, 5 * 60 * 1000); // 5 minutes
-    setInactivityTimer(timer);
-  };
-
-  const handleTokenExpired = () => {
-    handleLogout('expired');
-  };
-
-  // Add activity listeners
-  useEffect(() => {
-    if (isAuthenticated) {
-      const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'];
-      const resetTimer = () => resetInactivityTimer();
-      
-      events.forEach(event => {
-        document.addEventListener(event, resetTimer, true);
+      .catch(error => {
+        console.error('Error deleting product:', error);
+        alert('Error deleting product');
       });
-      
-      return () => {
-        events.forEach(event => {
-          document.removeEventListener(event, resetTimer, true);
-        });
-        if (inactivityTimer) {
-          clearTimeout(inactivityTimer);
-        }
-      };
     }
-  }, [isAuthenticated, inactivityTimer]);
+  };
 
-  if (!isAuthenticated) {
-    return <AdminLogin onLogin={handleLogin} />;
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    window.location.href = '/';
+  };
+
+  if (!user || !user.is_admin) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-red-600 mb-4">Access Denied</h1>
+          <p className="text-gray-600 mb-4">Admin privileges required</p>
+          <a href="/admin-login" className="text-indigo-600 hover:text-indigo-500">Admin Login</a>
+        </div>
+      </div>
+    );
   }
 
   if (loading) {
@@ -178,84 +125,137 @@ function AdminPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="mb-12 flex justify-between items-center">
           <div>
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">Sports Admin Panel</h1>
-            <p className="text-gray-600 text-lg">Manage your sports gear and inventory</p>
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">Admin Panel</h1>
+            <p className="text-gray-600 text-lg">Welcome, {user.name}</p>
           </div>
-          <div className="flex space-x-3">
-            <button 
-              onClick={() => setShowPasswordModal(true)}
-              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors"
-            >
-              Change Password
-            </button>
-            <button 
-              onClick={handleLogout}
-              className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors"
-            >
-              Logout
-            </button>
-          </div>
+          <button 
+            onClick={handleLogout}
+            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors"
+          >
+            Logout
+          </button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Add/Edit Product Form */}
-          <div>
-            <AdminProductForm 
-              onSubmit={editingProduct ? handleProductUpdated : handleProductAdded}
-              initialValues={editingProduct}
-              isEditing={!!editingProduct}
-              onCancel={handleCancelEdit}
-              token={token}
-            />
-          </div>
+        {/* Tab Navigation */}
+        <div className="border-b border-gray-200 mb-8">
+          <nav className="-mb-px flex space-x-8">
+            {[
+              { id: 'products', name: 'Manage Products', icon: '📦' },
+              { id: 'bestsellers', name: 'Best Sellers', icon: '🏆' }
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                  activeTab === tab.id
+                    ? 'border-indigo-500 text-indigo-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                <span className="mr-2">{tab.icon}</span>
+                {tab.name}
+              </button>
+            ))}
+          </nav>
+        </div>
 
-          {/* Products List */}
-          <div className="bg-white rounded-2xl shadow-lg p-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-8">Current Sports Gear ({products.length})</h2>
-            
-            <div className="space-y-4 max-h-96 overflow-y-auto">
-              {products.map(product => (
-                <div key={product.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
-                  <div className="flex items-center space-x-4">
-                    <img 
-                      src={product.image_url} 
-                      alt={product.name}
-                      className="w-12 h-12 object-cover rounded-lg bg-gray-100"
-                    />
-                    <div>
-                      <h3 className="font-semibold text-gray-900">{product.name}</h3>
-                      <p className="text-gray-600">KSh {product.price} • Stock: {product.stock}</p>
+        {activeTab === 'products' && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            {/* Add/Edit Product Form */}
+            <div>
+              <AdminProductForm 
+                onSubmit={editingProduct ? handleProductUpdated : handleProductAdded}
+                initialValues={editingProduct}
+                isEditing={!!editingProduct}
+                onCancel={handleCancelEdit}
+                token={token}
+              />
+            </div>
+
+            {/* Products List */}
+            <div className="bg-white rounded-2xl shadow-lg p-8">
+              <h2 className="text-2xl font-bold text-gray-900 mb-8">Current Products ({products.length})</h2>
+              
+              <div className="space-y-4 max-h-96 overflow-y-auto">
+                {products.map(product => (
+                  <div key={product.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                    <div className="flex items-center space-x-4">
+                      <img 
+                        src={product.image_url} 
+                        alt={product.name}
+                        className="w-12 h-12 object-cover rounded-lg bg-gray-100"
+                      />
+                      <div>
+                        <h3 className="font-semibold text-gray-900">{product.name}</h3>
+                        <p className="text-gray-600">${product.price} • Stock: {product.stock}</p>
+                      </div>
+                    </div>
+                    <div className="flex space-x-2">
+                      <button
+                        onClick={() => handleEditProduct(product)}
+                        className="text-blue-500 hover:text-blue-700 p-2 rounded-lg hover:bg-blue-50 transition-all duration-200"
+                      >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                      </button>
+                      <button
+                        onClick={() => handleDeleteProduct(product.id)}
+                        className="text-red-500 hover:text-red-700 p-2 rounded-lg hover:bg-red-50 transition-all duration-200"
+                      >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
                     </div>
                   </div>
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={() => handleEditProduct(product)}
-                      className="text-blue-500 hover:text-blue-700 p-2 rounded-lg hover:bg-blue-50 transition-all duration-200"
-                    >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                      </svg>
-                    </button>
-                    <button
-                      onClick={() => handleDeleteProduct(product.id)}
-                      className="text-red-500 hover:text-red-700 p-2 rounded-lg hover:bg-red-50 transition-all duration-200"
-                    >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-        
-        <ChangePasswordModal 
-          isOpen={showPasswordModal}
-          onClose={() => setShowPasswordModal(false)}
-          token={token}
-        />
+        )}
+
+        {activeTab === 'bestsellers' && (
+          <div className="bg-white rounded-2xl shadow-lg p-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-8">Best Selling Products</h2>
+            
+            {bestsellers.length === 0 ? (
+              <div className="text-center py-12">
+                <svg className="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+                <p className="text-gray-500 text-lg">No sales data available yet</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {bestsellers.map((product, index) => (
+                  <div key={product.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                    <div className="flex items-center space-x-4">
+                      <div className="flex items-center justify-center w-8 h-8 bg-yellow-100 text-yellow-800 rounded-full font-bold text-sm">
+                        #{index + 1}
+                      </div>
+                      <img 
+                        src={product.image_url} 
+                        alt={product.name}
+                        className="w-12 h-12 object-cover rounded-lg bg-gray-100"
+                      />
+                      <div>
+                        <h3 className="font-semibold text-gray-900">{product.name}</h3>
+                        <p className="text-gray-600">${product.price}</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-bold text-lg text-green-600">{product.total_sold} sold</p>
+                      <p className="text-sm text-gray-500">
+                        Revenue: ${(product.total_sold * product.price).toFixed(2)}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -33,7 +33,7 @@ function AdminLogin({ onLogin }) {
             .then(data => {
               if (data.access_token) {
                 localStorage.setItem('adminToken', data.access_token);
-                const isFirstLogin = values.email === 'admin@sportzone.com' && values.password === 'admin123';
+                const isFirstLogin = values.email === 'admin@sportzone.com' && values.password === 'Admin@123';
                 onLogin(data.access_token, isFirstLogin);
               } else {
                 setError(data.error || 'Login failed');

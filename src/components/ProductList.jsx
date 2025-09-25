@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import ProductCard from './ProductCard';
 import { API_BASE_URL } from '../config';
 
 function ProductList() {
@@ -56,59 +57,43 @@ function ProductList() {
     <div className="bg-white min-h-screen">
       {/* Hero Section */}
       <div className="bg-gradient-to-r from-gray-900 to-gray-700 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-24">
           <div className="text-center">
-            <h1 className="text-4xl md:text-6xl font-bold mb-6">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6">
               Premium Sports Collection
             </h1>
-            <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto">
+            <p className="text-lg sm:text-xl md:text-2xl text-gray-300 mb-6 sm:mb-8 max-w-3xl mx-auto px-4">
               Discover top-quality sporting goods and athletic gear designed for peak performance
             </p>
             <div className="flex justify-center">
-              <div className="w-24 h-1 bg-white rounded-full"></div>
+              <div className="w-16 sm:w-24 h-1 bg-white rounded-full"></div>
             </div>
           </div>
         </div>
       </div>
 
       {/* Products Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">Featured Sports Gear</h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+        <div className="text-center mb-8 sm:mb-12">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">Featured Sports Gear</h2>
+          <p className="text-gray-600 max-w-2xl mx-auto px-4">
             Carefully curated selection of premium sporting goods that combine performance, quality, and durability
           </p>
         </div>
 
         {/* Search Results */}
         {new URLSearchParams(location.search).get('search') && (
-          <div className="mb-8">
-            <p className="text-gray-600">
+          <div className="mb-6 sm:mb-8">
+            <p className="text-gray-600 text-sm sm:text-base">
               {filteredProducts.length} result{filteredProducts.length !== 1 ? 's' : ''} for "{new URLSearchParams(location.search).get('search')}"
             </p>
           </div>
         )}
 
         {/* Products Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
           {filteredProducts.length > 0 ? filteredProducts.map((product) => (
-            <div key={product.id} className="group">
-              <Link to={`/products/${product.id}`} className="block">
-                <div className="bg-white rounded-lg shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300 overflow-hidden">
-                  <div className="aspect-square overflow-hidden bg-gray-50">
-                    <img 
-                      src={product.image_url} 
-                      alt={product.name} 
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                    />
-                  </div>
-                  <div className="p-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">{product.name}</h3>
-                    <p className="text-2xl font-bold text-gray-900">KSh {product.price}</p>
-                  </div>
-                </div>
-              </Link>
-            </div>
+            <ProductCard key={product.id} product={product} />
           )) : (
             <div className="col-span-full text-center py-12">
               <svg className="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
