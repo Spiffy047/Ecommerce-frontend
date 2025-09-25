@@ -1,157 +1,311 @@
-# SportZone - Ecommerce Application
+# SportZone E-commerce Platform
 
-A full-stack ecommerce application for sporting goods built with Flask backend and React frontend.
-
-## Live Demo
-
-- **Frontend**: [SportZone Live App](https://sportzone-t1e0.onrender.com)
-- **Backend API**: [https://ecommerce-backend-rfab.onrender.com](https://ecommerce-backend-rfab.onrender.com)
+A comprehensive e-commerce platform with advanced user authentication, admin management, and security features.
 
 ## Features
 
-- **Product Management**: Full CRUD operations for sports products
-- **Admin Authentication**: Secure admin panel with JWT authentication
-- **Review System**: Customer reviews with ratings
-- **Shopping Cart**: Add to cart functionality
-- **Search**: Product search by name and description
-- **Responsive Design**: Modern, mobile-friendly interface
+### User Authentication & Security
+- **Secure User Registration** with email validation
+- **Two-Factor Security Questions** for account recovery
+- **Password Reset System** using security questions
+- **Separate Admin Authentication** with restricted access
+- **JWT Token-based Authentication**
+- **Profile Management** with personal information updates
+- **Password Change** functionality
 
-## Tech Stack
+### User Experience
+- **Personalized Login** with user name display
+- **User Profile Dashboard** with order history
+- **Review System** with user names tied to reviews
+- **Shopping Cart** with authentication-required checkout
+- **Order Confirmation** with order tracking
 
-**Backend:**
-- Flask (Python)
-- SQLAlchemy ORM
-- JWT Authentication
-- SQLite Database
-- CORS enabled
+### Admin Features
+- **Secure Admin Panel** with admin-only access
+- **Product Management** (CRUD operations)
+- **Best Sellers Analytics** showing top-selling products
+- **Sales Revenue Tracking**
+- **Admin Dashboard** with comprehensive controls
 
-**Frontend:**
-- React 18
+### Security Measures
+- **Password Hashing** using bcrypt
+- **Protected Routes** with authentication middleware
+- **Admin Route Protection** preventing user access
+- **Session Management** with JWT tokens
+- **Input Validation** and sanitization
+
+## System Requirements
+
+### Backend
+- Python 3.8+
+- Flask
+- SQLAlchemy
+- Flask-JWT-Extended
+- bcrypt
+- Flask-CORS
+
+### Frontend
+- Node.js 16+
+- React 18+
 - React Router
-- Formik + Yup validation
 - Tailwind CSS
-- Context API for state management
+- Formik & Yup (for forms)
 
-## Setup Instructions
+## Installation & Setup
 
 ### Backend Setup
 ```bash
 cd Ecommerce-Backend
-pip install -r requirements.txt
-python fix_and_run.py  # Initialize database with sample data
-python app.py          # Start Flask server on port 5000
+
+# Install dependencies (if using pipenv)
+pipenv install
+
+# Or install manually
+pip install flask flask-cors flask-jwt-extended sqlalchemy sqlalchemy-serializer bcrypt
+
+# Reset database with new schema
+python simple_reset.py
+
+# Start the backend server
+python app.py
 ```
 
 ### Frontend Setup
 ```bash
-cd frontend
+cd Ecommerce-frontend
+
+# Install dependencies
 npm install
-npm run dev           # Start development server
+
+# Start the development server
+npm run dev
 ```
 
-## Admin Access
+## Default Accounts
 
-**Default Admin Credentials:**
-- Email: `admin@sportzone.com`
-- Password: `Admin@123`
+### Admin Account
+- **Email:** admin@sportzone.com
+- **Password:** Admin@123
+- **Access:** Full admin privileges
 
-**Security Note**: Change the default admin password immediately after first login.
+### Sample User Account
+- **Email:** user@example.com
+- **Password:** user123
+- **Access:** Regular user privileges
 
-## Database Models
+## Authentication Flow
 
-- **User**: Customer and admin accounts
-- **Product**: Sports merchandise items
-- **Review**: Product reviews and ratings
-- **Order**: Customer orders with many-to-many product relationships
+### User Registration
+1. User provides email, password, name, and optional contact info
+2. User selects and answers two security questions
+3. System creates account with hashed password and security answers
+4. User receives JWT token for immediate login
 
-## API Endpoints
+### User Login
+1. User enters email and password
+2. System validates credentials
+3. JWT token issued for authenticated sessions
+4. User redirected to main store with personalized navigation
 
-### Products
-- `GET /api/products` - List all products
-- `POST /api/products` - Create product (admin only)
-- `PUT /api/products/<id>` - Update product (admin only)
-- `DELETE /api/products/<id>` - Delete product (admin only)
+### Password Recovery
+1. User enters email address
+2. System displays security questions
+3. User answers security questions
+4. If correct, user can set new password
+5. Password updated and user can login
 
-### Reviews
-- `GET /api/products/<id>/reviews` - Get product reviews
-- `POST /api/products/<id>/reviews` - Add review
+### Admin Access
+1. Separate admin login page with enhanced security
+2. Admin credentials validated against admin flag
+3. Admin-only routes protected from regular users
+4. Admin panel with product and analytics management
 
-### Authentication
-- `POST /api/auth/login` - User login
-- `POST /api/auth/register` - User registration
-- `POST /api/auth/change-password` - Change password (authenticated)
+## Database Schema
+
+### Users Table
+- `id` - Primary key
+- `email` - Unique user email
+- `password_hash` - Bcrypt hashed password
+- `name` - User's full name
+- `phone` - Contact number (optional)
+- `address` - User address (optional)
+- `is_admin` - Admin flag (0/1)
+- `security_question_1` - First security question
+- `security_answer_1` - Hashed answer to first question
+- `security_question_2` - Second security question
+- `security_answer_2` - Hashed answer to second question
+- `created_at` - Account creation timestamp
+
+### Products Table
+- `id` - Primary key
+- `name` - Product name
+- `description` - Product description
+- `price` - Product price
+- `image_url` - Product image URL
+- `stock` - Available quantity
+- `total_sold` - Total units sold (for analytics)
+
+### Orders Table
+- `id` - Primary key
+- `user_id` - Foreign key to users
+- `order_date` - Order timestamp
+- `status` - Order status
+- `total_amount` - Total order value
+
+### Order Items Table
+- `id` - Primary key
+- `order_id` - Foreign key to orders
+- `product_id` - Foreign key to products
+- `quantity` - Ordered quantity
+- `price_at_time` - Price when ordered
+
+### Reviews Table
+- `id` - Primary key
+- `user_id` - Foreign key to users
+- `product_id` - Foreign key to products
+- `rating` - Rating (1-5)
+- `comment` - Review text
+- `created_at` - Review timestamp
 
 ## Security Features
 
-- JWT token authentication
-- Admin role-based access control
-- Password hashing with bcrypt
+### Password Security
+- Bcrypt hashing with salt
+- Minimum password requirements
+- Secure password reset process
+
+### Authentication Security
+- JWT tokens with expiration
+- Protected API endpoints
+- Role-based access control
+
+### Data Protection
 - Input validation and sanitization
-- Protected admin endpoints
+- SQL injection prevention
+- XSS protection
+
+### Admin Security
+- Separate admin authentication
+- Admin-only route protection
+- Enhanced admin login process
+
+## API Endpoints
+
+### Authentication
+- `POST /api/auth/register` - User registration
+- `POST /api/auth/login` - User login
+- `POST /api/auth/admin-login` - Admin login
+- `POST /api/auth/forgot-password` - Get security questions
+- `POST /api/auth/verify-security` - Verify security answers
+- `POST /api/auth/reset-password` - Reset password
+- `POST /api/auth/change-password` - Change password
+
+### User Management
+- `GET /api/user/profile` - Get user profile
+- `PUT /api/user/profile` - Update user profile
+- `GET /api/user/orders` - Get user order history
+
+### Products
+- `GET /api/products` - Get all products
+- `GET /api/products/:id` - Get product details
+- `POST /api/products` - Add product (admin only)
+- `PUT /api/products/:id` - Update product (admin only)
+- `DELETE /api/products/:id` - Delete product (admin only)
+
+### Reviews
+- `GET /api/products/:id/reviews` - Get product reviews
+- `POST /api/products/:id/reviews` - Add review (authenticated)
+
+### Orders
+- `POST /api/orders/checkout` - Process checkout (authenticated)
+
+### Analytics
+- `GET /api/admin/bestsellers` - Get best-selling products (admin only)
+
+## Frontend Components
+
+### Authentication Components
+- `UserAuth.jsx` - Login/Register with security questions
+- `AdminAuth.jsx` - Secure admin login
+- `UserProfile.jsx` - Profile management and order history
+
+### Shopping Components
+- `ProductList.jsx` - Product catalog
+- `ProductDetails.jsx` - Product details with reviews
+- `CartPage.jsx` - Shopping cart with checkout
+- `ReviewForm.jsx` - Authenticated review submission
+
+### Admin Components
+- `AdminPage.jsx` - Admin dashboard with tabs
+- `AdminProductForm.jsx` - Product management form
+
+### Navigation
+- `Navbar.jsx` - Responsive navigation with user state
+- `App.jsx` - Route protection and authentication context
+
+## User Journey
+
+### New User Registration
+1. Visit registration page
+2. Fill personal information
+3. Select and answer security questions
+4. Account created and logged in
+5. Redirected to store with personalized experience
+
+### Shopping Experience
+1. Browse products as guest or authenticated user
+2. Add items to cart
+3. Authentication required for checkout
+4. Order confirmation with tracking
+5. Order history available in profile
+
+### Review System
+1. Authentication required to write reviews
+2. User name displayed with reviews
+3. Reviews tied to user accounts
+4. Review history in user profile
+
+### Admin Management
+1. Secure admin login
+2. Product management (add/edit/delete)
+3. View best sellers and analytics
+4. Monitor sales performance
 
 ## Deployment
 
-### Backend (Render)
-- **URL**: https://ecommerce-backend-rfab.onrender.com
-- **Environment**: Production
-- **Database**: SQLite (auto-initialized)
+### Backend Deployment
+- Configure environment variables
+- Set up production database
+- Deploy to cloud platform (Render)
 
-### Frontend (Render - Static Site)
-- **Build Command**: `npm install && npm run build`
-- **Publish Directory**: `./dist`
-- **Environment Variables**: `VITE_API_URL`
-
-## Development Notes
-
-- Database file (`ecommerce.db`) is gitignored for security
-- Admin creation scripts are excluded from version control
-- Environment variables should be used for production secrets
-- Default credentials are for development only
-- Auto-logout after 5 minutes of inactivity for security
-
-## Project Structure
-
-```
-Ecommerce/
-├── Ecommerce-Backend/     # Flask API backend
-│   ├── app.py            # Main application
-│   ├── models.py         # Database models
-│   ├── requirements.txt  # Python dependencies
-│   └── render.yaml       # Deployment config
-├── frontend/             # React frontend
-│   ├── src/
-│   │   ├── components/   # React components
-│   │   ├── context/      # Context providers
-│   │   └── config.js     # API configuration
-│   ├── package.json      # Node dependencies
-│   └── vite.config.js    # Build configuration
-└── README.md
-```
+### Frontend Deployment
+- Build production bundle: `npm run build`
+- Deploy to static hosting (Netlify, Vercel, etc.)
+- Configure API endpoints for production
 
 ## Contributing
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+2. Create feature branch
+3. Implement changes with tests
+4. Submit pull request
+
+## Contributors
+1. @spiffy047 - Lead Developer
+2. @abubakar324 - Developer
+
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License.
 
-## Contributors
+## Support
 
-- [@spiffy047](https://github.com/spiffy047) - Lead Developer
-- [@abubakar324](https://github.com/abubakar324) - Developer
+For support and questions:
+- Create an issue in the repository
+- Contact the development team
+- Check the documentation
+- reach out to mwanikijoe1@gmail.com
+---
 
-## Contact
-
-For questions, suggestions, or support, please contact:
-- **Email**: mwanikijoe1@gmail.com
-- **Project Repository**: [SportZone Ecommerce](https://github.com/spiffy047/Ecommerce)
-
-## Acknowledgments
-
-- Inspired by modern e-commerce platforms
-- Uses best practices for full-stack development
+**SportZone E-commerce Platform** - Secure, scalable, and user-friendly online shopping experience with comprehensive authentication and admin management.
