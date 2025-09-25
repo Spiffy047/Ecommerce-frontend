@@ -89,8 +89,8 @@ npm run dev
 - **Access:** Full admin privileges
 
 ### Sample User Account
-- **Email:** user@example.com
-- **Password:** user123
+- **Email:** john.doe@example.com
+- **Password:** Test123!
 - **Access:** Regular user privileges
 
 ## Authentication Flow
