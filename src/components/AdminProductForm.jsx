@@ -18,8 +18,8 @@ const ProductSchema = Yup.object().shape({
     .required('Price is required')
     .typeError('Price must be a number')
     .positive('Price must be positive')
-    .min(1, 'Price must be at least KSh 1')
-    .max(9999999, 'Price must be less than KSh 10,000,000')
+    .min(100, 'Price must be at least KSh 100')
+    .max(999999999, 'Price must be less than KSh 1,000,000,000')
     .test('decimal-places', 'Price can have at most 2 decimal places', 
       value => value === undefined || /^\d+(\.\d{1,2})?$/.test(value.toString())),
   stock: Yup.number()
