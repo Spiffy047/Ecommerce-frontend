@@ -2,6 +2,9 @@
 
 A comprehensive e-commerce platform with advanced user authentication, admin management, and security features.
 
+## Backend Repository
+- https://github.com/abubakar324/Ecommerce-Backend
+- 
 ## Features
 
 ### User Authentication & Security
