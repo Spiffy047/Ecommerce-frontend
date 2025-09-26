@@ -2,9 +2,6 @@
 
 A comprehensive e-commerce platform with advanced user authentication, admin management, and security features.
 
-## Backend Repository
-- https://github.com/abubakar324/Ecommerce-Backend
-- 
 ## Features
 
 ### User Authentication & Security
@@ -40,9 +37,10 @@ A comprehensive e-commerce platform with advanced user authentication, admin man
 ## System Requirements
 
 ### Backend
-- Python 3.8+
-- Flask
-- SQLAlchemy
+- Python 3.10+ (3.13.4 on Render)
+- Flask 2.3.3
+- PostgreSQL database
+- pg8000 (PostgreSQL driver)
 - Flask-JWT-Extended
 - bcrypt
 - Flask-CORS
@@ -60,16 +58,13 @@ A comprehensive e-commerce platform with advanced user authentication, admin man
 ```bash
 cd Ecommerce-Backend
 
-# Install dependencies (if using pipenv)
-pipenv install
+# Install dependencies
+pip install -r requirements.txt
 
-# Or install manually
-pip install flask flask-cors flask-jwt-extended sqlalchemy sqlalchemy-serializer bcrypt
+# Set DATABASE_URL environment variable for PostgreSQL
+export DATABASE_URL="postgresql://username:password@host:port/database"
 
-# Reset database with new schema
-python simple_reset.py
-
-# Start the backend server
+# Start the backend server (database tables auto-created)
 python app.py
 ```
 
@@ -123,7 +118,11 @@ npm run dev
 3. Admin-only routes protected from regular users
 4. Admin panel with product and analytics management
 
-## Database Schema
+## Database (PostgreSQL)
+
+The application uses PostgreSQL database with automatic table creation and initialization. Database tables are created automatically on first startup with proper foreign key relationships and constraints.
+
+### Database Schema
 
 ### Users Table
 - `id` - Primary key
@@ -276,15 +275,20 @@ npm run dev
 
 ## Deployment
 
-### Backend Deployment
-- Configure environment variables
-- Set up production database
-- Deploy to cloud platform (Render)
+### Backend Deployment (Render)
+- **Live URL:** https://ecommerce-backend-rfab.onrender.com
+- **Database:** PostgreSQL on Render
+- **Runtime:** Python 3.13.4 (auto-selected by Render)
+- **Driver:** pg8000 (pure Python PostgreSQL driver)
+- **Auto-deployment:** Connected to GitHub repository
+- **Database initialization:** Automatic table creation with IF NOT EXISTS
 
-### Frontend Deployment
+### Frontend Deployment (Render)
+- **Live URL:** https://sportzone-t1e0.onrender.com
 - Build production bundle: `npm run build`
-- Deploy to static hosting (Netlify, Vercel, etc.)
-- Configure API endpoints for production
+- Deploy to Netlify with automatic builds
+- Environment variables configured for production API
+
 
 ## Contributing
 
